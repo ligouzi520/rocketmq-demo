@@ -7,6 +7,7 @@ rocketmq:
   topic: rocketmq_demo_custom_topic
   producer:
     customGroup: rocketmq_demo_custom_producer_group
+    orderGroup: rocketmq_demo_order_producer_group
     transactionGroup: rocketmq_demo_transaction_producer_group
   consumer:
     group: rocketmq_demo_custom_consumer_group

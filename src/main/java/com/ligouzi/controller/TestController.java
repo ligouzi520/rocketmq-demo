@@ -7,6 +7,8 @@ package com.ligouzi.controller;
 import com.ligouzi.config.RocketmqConfig;
 import com.ligouzi.dto.response.JsonResp;
 import com.ligouzi.producer.CustomMessageProducer;
+import com.ligouzi.producer.OrderMessageProducer;
+import org.apache.rocketmq.client.producer.SendResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,6 +29,9 @@ public class TestController {
     @Resource
     private CustomMessageProducer customMessageProducer;
 
+    @Resource
+    private OrderMessageProducer orderMessageProducer;
+
     @GetMapping("/syncMessage")
     public JsonResp syncMessage(String tag, String key, String body) throws Exception {
         return JsonResp.success(customMessageProducer.syncSend(rocketmqConfig.getCustomTopic(), tag, key, body));
@@ -42,6 +47,12 @@ public class TestController {
     public JsonResp onewayMessage(String tag, String key, String body) throws Exception {
         customMessageProducer.sendOneway(rocketmqConfig.getCustomTopic(), tag, key, body);
         return JsonResp.success();
+    }
+
+    @GetMapping("/orderMessage")
+    public JsonResp orderMessage(String tag, String key, String body, Integer selectKey) throws Exception {
+        SendResult sendResult = orderMessageProducer.orderSend(rocketmqConfig.getCustomTopic(), tag, key, body, selectKey);
+        return JsonResp.success(sendResult);
     }
 
 }

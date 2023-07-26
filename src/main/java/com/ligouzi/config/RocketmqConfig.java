@@ -28,6 +28,9 @@ public class RocketmqConfig {
     @Value("${rocketmq.producer.customGroup}")
     private String customProducerGroup;
 
+    @Value("${rocketmq.producer.orderGroup}")
+    private String orderProducerGroup;
+
     @Value("${rocketmq.producer.transactionGroup}")
     private String transactionProducerGroup;
 
