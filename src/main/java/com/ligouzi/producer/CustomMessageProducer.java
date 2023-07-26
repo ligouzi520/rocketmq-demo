@@ -5,8 +5,6 @@
 package com.ligouzi.producer;
 
 import com.ligouzi.config.RocketmqConfig;
-import org.apache.rocketmq.client.exception.MQClientException;
-import org.apache.rocketmq.client.producer.DefaultMQProducer;
 import org.apache.rocketmq.client.producer.SendCallback;
 import org.apache.rocketmq.client.producer.SendResult;
 import org.apache.rocketmq.common.message.Message;
@@ -20,21 +18,14 @@ import org.springframework.stereotype.Component;
  * @date 2023-07-24
  */
 @Component
-public class CustomMessageProducer {
+public class CustomMessageProducer extends AbstractMessageProducer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CustomMessageProducer.class);
 
-    private final DefaultMQProducer producer;
+    private static final String PRODUCER_TYPE = "custom";
 
     public CustomMessageProducer(RocketmqConfig rocketmqConfig) {
-        this.producer = new DefaultMQProducer(rocketmqConfig.getCustomProducerGroup());
-        this.producer.setRetryTimesWhenSendFailed(rocketmqConfig.getRetryTimes());
-        this.producer.setNamesrvAddr(rocketmqConfig.getNameServer());
-        start();
-    }
-
-    public DefaultMQProducer getProducer() {
-        return this.producer;
+        super(rocketmqConfig.getCustomProducerGroup(), rocketmqConfig, PRODUCER_TYPE);
     }
 
     /**
@@ -89,19 +80,6 @@ public class CustomMessageProducer {
             LOGGER.error("send oneway message to rocketmq error, cause by: ", e);
             throw e;
         }
-    }
-
-    public void start() {
-        try {
-            this.producer.start();
-            LOGGER.info("custom message producer start ...");
-        } catch (MQClientException e) {
-            LOGGER.warn("custom message producer start error, cause by: ", e);
-        }
-    }
-
-    public void shutdown() {
-        this.producer.shutdown();
     }
 
 }

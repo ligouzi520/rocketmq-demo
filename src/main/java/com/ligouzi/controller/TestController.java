@@ -8,6 +8,7 @@ import com.ligouzi.config.RocketmqConfig;
 import com.ligouzi.dto.response.JsonResp;
 import com.ligouzi.producer.CustomMessageProducer;
 import com.ligouzi.producer.OrderMessageProducer;
+import com.ligouzi.producer.ScheduledMessageProducer;
 import org.apache.rocketmq.client.producer.SendResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,6 +33,9 @@ public class TestController {
     @Resource
     private OrderMessageProducer orderMessageProducer;
 
+    @Resource
+    private ScheduledMessageProducer scheduledMessageProducer;
+
     @GetMapping("/syncMessage")
     public JsonResp syncMessage(String tag, String key, String body) throws Exception {
         return JsonResp.success(customMessageProducer.syncSend(rocketmqConfig.getCustomTopic(), tag, key, body));
@@ -52,6 +56,12 @@ public class TestController {
     @GetMapping("/orderMessage")
     public JsonResp orderMessage(String tag, String key, String body, Integer selectKey) throws Exception {
         SendResult sendResult = orderMessageProducer.orderSend(rocketmqConfig.getCustomTopic(), tag, key, body, selectKey);
+        return JsonResp.success(sendResult);
+    }
+
+    @GetMapping("/scheduledMessage")
+    public JsonResp scheduledMessage(String tag, String key, String body, Integer delayTimeLevel) throws Exception {
+        SendResult sendResult = scheduledMessageProducer.scheduledSend(rocketmqConfig.getCustomTopic(), tag, key, body, delayTimeLevel);
         return JsonResp.success(sendResult);
     }
 
