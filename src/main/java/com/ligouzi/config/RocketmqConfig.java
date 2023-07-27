@@ -40,7 +40,10 @@ public class RocketmqConfig {
     @Value("${rocketmq.producer.transactionGroup}")
     private String transactionProducerGroup;
 
-    @Value("${rocketmq.consumer.group}")
-    private String consumerGroup;
+    @Value("${rocketmq.consumer.pushGroup}")
+    private String pushConsumerGroup;
+
+    @Value("${rocketmq.consumer.pullGroup}")
+    private String pullConsumerGroup;
 
 }

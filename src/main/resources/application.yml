@@ -12,4 +12,5 @@ rocketmq:
     batchGroup: rocketmq_demo_batch_producer_group
     transactionGroup: rocketmq_demo_transaction_producer_group
   consumer:
-    group: rocketmq_demo_custom_consumer_group
+    pushGroup: rocketmq_demo_push_consumer_group
+    pullGroup: rocketmq_demo_pull_consumer_group
