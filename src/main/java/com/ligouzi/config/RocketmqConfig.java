@@ -31,6 +31,12 @@ public class RocketmqConfig {
     @Value("${rocketmq.producer.orderGroup}")
     private String orderProducerGroup;
 
+    @Value("${rocketmq.producer.batchGroup}")
+    private String batchProducerGroup;
+
+    @Value("${rocketmq.producer.scheduledGroup}")
+    private String scheduledProducerGroup;
+
     @Value("${rocketmq.producer.transactionGroup}")
     private String transactionProducerGroup;
 

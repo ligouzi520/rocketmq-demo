@@ -5,16 +5,22 @@
 package com.ligouzi.controller;
 
 import com.ligouzi.config.RocketmqConfig;
+import com.ligouzi.dto.request.MessageReq;
 import com.ligouzi.dto.response.JsonResp;
+import com.ligouzi.producer.BatchMessageProducer;
 import com.ligouzi.producer.CustomMessageProducer;
 import com.ligouzi.producer.OrderMessageProducer;
 import com.ligouzi.producer.ScheduledMessageProducer;
 import org.apache.rocketmq.client.producer.SendResult;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.apache.rocketmq.common.message.Message;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author yezehao
@@ -36,32 +42,49 @@ public class TestController {
     @Resource
     private ScheduledMessageProducer scheduledMessageProducer;
 
-    @GetMapping("/syncMessage")
-    public JsonResp syncMessage(String tag, String key, String body) throws Exception {
-        return JsonResp.success(customMessageProducer.syncSend(rocketmqConfig.getCustomTopic(), tag, key, body));
+    @Resource
+    private BatchMessageProducer batchMessageProducer;
+
+    @PostMapping("/syncMessage")
+    public JsonResp syncMessage(@RequestBody MessageReq req) throws Exception {
+        Message message = new Message(rocketmqConfig.getCustomTopic(), req.getTag(), req.getKey(), req.getBody().getBytes());
+        return JsonResp.success(customMessageProducer.syncSend(message));
     }
 
-    @GetMapping("/asyncMessage")
-    public JsonResp asyncMessage(String tag, String key, String body) throws Exception {
-        customMessageProducer.asyncSend(rocketmqConfig.getCustomTopic(), tag, key, body);
+    @PostMapping("/asyncMessage")
+    public JsonResp asyncMessage(@RequestBody MessageReq req) throws Exception {
+        Message message = new Message(rocketmqConfig.getCustomTopic(), req.getTag(), req.getKey(), req.getBody().getBytes());
+        customMessageProducer.asyncSend(message);
         return JsonResp.success();
     }
 
-    @GetMapping("/onewayMessage")
-    public JsonResp onewayMessage(String tag, String key, String body) throws Exception {
-        customMessageProducer.sendOneway(rocketmqConfig.getCustomTopic(), tag, key, body);
+    @PostMapping("/onewayMessage")
+    public JsonResp onewayMessage(@RequestBody MessageReq req) throws Exception {
+        Message message = new Message(rocketmqConfig.getCustomTopic(), req.getTag(), req.getKey(), req.getBody().getBytes());
+        customMessageProducer.sendOneway(message);
         return JsonResp.success();
     }
 
-    @GetMapping("/orderMessage")
-    public JsonResp orderMessage(String tag, String key, String body, Integer selectKey) throws Exception {
-        SendResult sendResult = orderMessageProducer.orderSend(rocketmqConfig.getCustomTopic(), tag, key, body, selectKey);
+    @PostMapping("/orderMessage")
+    public JsonResp orderMessage(@RequestBody MessageReq req) throws Exception {
+        Message message = new Message(rocketmqConfig.getCustomTopic(), req.getTag(), req.getKey(), req.getBody().getBytes());
+        SendResult sendResult = orderMessageProducer.orderSend(message, req.getSelectKey());
         return JsonResp.success(sendResult);
     }
 
-    @GetMapping("/scheduledMessage")
-    public JsonResp scheduledMessage(String tag, String key, String body, Integer delayTimeLevel) throws Exception {
-        SendResult sendResult = scheduledMessageProducer.scheduledSend(rocketmqConfig.getCustomTopic(), tag, key, body, delayTimeLevel);
+    @PostMapping("/scheduledMessage")
+    public JsonResp scheduledMessage(@RequestBody MessageReq req) throws Exception {
+        Message message = new Message(rocketmqConfig.getCustomTopic(), req.getTag(), req.getKey(), req.getBody().getBytes());
+        SendResult sendResult = scheduledMessageProducer.scheduledSend(message, req.getDelayTimeLevel());
+        return JsonResp.success(sendResult);
+    }
+
+    @PostMapping("/batchMessage")
+    public JsonResp batchMessage(@RequestBody List<MessageReq> list) throws Exception {
+        List<Message> messages = list.stream()
+            .map(req -> new Message(rocketmqConfig.getCustomTopic(), req.getTag(), req.getKey(), req.getBody().getBytes()))
+            .collect(Collectors.toList());
+        SendResult sendResult = batchMessageProducer.batchSend(messages);
         return JsonResp.success(sendResult);
     }
 

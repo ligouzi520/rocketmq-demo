@@ -32,9 +32,8 @@ public class CustomMessageProducer extends AbstractMessageProducer {
      * 同步发送
      * 同步发送方式请务必捕获发送异常，并做业务侧失败兜底逻辑，如果忽略异常则可能会导致消息未成功发送的情况。
      */
-    public SendResult syncSend(String topic, String tag, String key, String body) throws Exception {
+    public SendResult syncSend(Message message) throws Exception {
         try {
-            Message message = new Message(topic, tag, key, body.getBytes());
             return this.producer.send(message);
         } catch (Exception e) {
             LOGGER.error("sync send message to rocketmq error, cause by: ", e);
@@ -48,8 +47,7 @@ public class CustomMessageProducer extends AbstractMessageProducer {
      * 异步发送与同步发送代码唯一区别在于调用send接口的参数不同，异步发送不会等待发送返回。
      * 取而代之的是send方法需要传入 SendCallback 的实现，SendCallback 接口主要有onSuccess 和 onException 两个方法，表示消息发送成功和消息发送失败。
      */
-    public void asyncSend(String topic, String tag, String key, String body) throws Exception {
-        Message message = new Message(topic, tag, key, body.getBytes());
+    public void asyncSend(Message message) throws Exception {
         try {
             this.producer.send(message, new SendCallback() {
                 @Override
@@ -72,8 +70,7 @@ public class CustomMessageProducer extends AbstractMessageProducer {
      * 单向模式发送
      * 单向模式调用sendOneway，不会对返回结果有任何等待和处理。
      */
-    public void sendOneway(String topic, String tag, String key, String body) throws Exception {
-        Message message = new Message(topic, tag, key, body.getBytes());
+    public void sendOneway(Message message) throws Exception {
         try {
             this.producer.sendOneway(message);
         } catch (Exception e) {

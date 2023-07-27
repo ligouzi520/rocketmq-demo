@@ -35,8 +35,10 @@ public class OrderMessageProducer extends AbstractMessageProducer {
      * 生产环境中建议选择最细粒度的分区键进行拆分，例如，将订单ID、用户ID作为分区键关键字，可实现同一终端用户的消息按照顺序处理，不同用户的消息无需保证顺序。
      * @param selectKey 分区关键字，根据该字段选择分区
      */
-    public SendResult orderSend(String topic, String tag, String key, String body, Integer selectKey) throws Exception {
-        Message message = new Message(topic, tag, key, body.getBytes());
+    public SendResult orderSend(Message message, Integer selectKey) throws Exception {
+        if (selectKey == null) {
+            throw new Exception();
+        }
         try {
             return this.producer.send(message, (mqs, msg, arg) -> {
                 Integer index = (Integer) arg;

@@ -8,6 +8,8 @@ rocketmq:
   producer:
     customGroup: rocketmq_demo_custom_producer_group
     orderGroup: rocketmq_demo_order_producer_group
+    scheduledGroup: rocketmq_demo_scheduled_producer_group
+    batchGroup: rocketmq_demo_batch_producer_group
     transactionGroup: rocketmq_demo_transaction_producer_group
   consumer:
     group: rocketmq_demo_custom_consumer_group
