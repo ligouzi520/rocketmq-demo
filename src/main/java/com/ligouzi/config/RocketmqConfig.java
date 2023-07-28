@@ -43,7 +43,10 @@ public class RocketmqConfig {
     @Value("${rocketmq.consumer.pushGroup}")
     private String pushConsumerGroup;
 
-    @Value("${rocketmq.consumer.pullGroup}")
-    private String pullConsumerGroup;
+    @Value("${rocketmq.consumer.subscribePullGroup}")
+    private String subscribePullConsumerGroup;
+
+    @Value("${rocketmq.consumer.assignPullGroup}")
+    private String assignPullConsumerGroup;
 
 }

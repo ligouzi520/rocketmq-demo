@@ -13,4 +13,5 @@ rocketmq:
     transactionGroup: rocketmq_demo_transaction_producer_group
   consumer:
     pushGroup: rocketmq_demo_push_consumer_group
-    pullGroup: rocketmq_demo_pull_consumer_group
+    subscribePullGroup: rocketmq_demo_subscribe_pull_consumer_group
+    assignPullGroup: rocketmq_demo_assign_pull_consumer_group
